@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import LanguageInput from "@/components/LanguageInput";
 import ResultSection from "@/components/ResultSection";
 import {
-	ConcatResult,
+	OperationResult,
 	concatenate,
 	findIllegalSymbols,
 	parseAlphabet,
@@ -17,7 +17,7 @@ export default function Home() {
 	const [l1Raw, setL1Raw] = useState("a, ab");
 	const [l2Raw, setL2Raw] = useState("b, ba");
 	const [maxLen, setMaxLen] = useState(4);
-	const [result, setResult] = useState<ConcatResult | null>(null);
+	const [result, setResult] = useState<OperationResult | null>(null);
 
 	const alphabet = useMemo(() => parseAlphabet(alphabetRaw), [alphabetRaw]);
 	const illegal1 = useMemo(() => findIllegalSymbols(l1Raw, alphabet), [l1Raw, alphabet]);

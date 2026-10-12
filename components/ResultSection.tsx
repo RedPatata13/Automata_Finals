@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ConcatResult, MAX_RESULTS } from "@/lib/formal";
+import { OperationResult, MAX_RESULTS } from "@/lib/formal";
 
 const PAGE_SIZE = 100;
 
-export default function ResultSection({ result }: { result: ConcatResult | null }) {
+export default function ResultSection({ result }: { result: OperationResult | null }) {
   const [page, setPage] = useState(1);
 
   useEffect(() => setPage(1), [result]);

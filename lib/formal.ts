@@ -56,22 +56,18 @@ export function removeIllegalSymbols(raw: string, alphabet: string[]): string {
   return Array.from(new Set(cleaned)).join(", ");
 }
 
-export type ConcatResult = {
+export type OperationResult = {
   strings: string[];
-  truncated: boolean; // true if the 10,000 cap was hit
+  truncated: boolean; // true if 10,000 cap was hit
   ms: number;
 };
 
-/**
- * L1 · L2 = { xy | x ∈ L1, y ∈ L2 }
- * Only keeps strings with at most `maxLength` symbols and stops at MAX_RESULTS.
- */
 export function concatenate(
     l1: string[],
     l2: string[],
     alphabet: string[],
     maxLength: number
-): ConcatResult {
+): OperationResult {
     const start = performance.now();
     const lenOf = (s: string) => (s === EMPTY ? 0 : tokenize(s, alphabet).tokens.length);
     const text = (s: string) => (s === EMPTY ? "" : s);
@@ -95,4 +91,28 @@ export function concatenate(
 
     const strings = Array.from(out).map((s) => (s === "" ? EMPTY : s));
     return { strings, truncated, ms: performance.now() - start };
+}
+
+export function union(
+  l1: string[],
+  l2: string[],
+  alphabet: string[],
+  maxLength: number
+): OperationResult {
+    const start = performance.now();
+    const lenOf = (s: string) => (s === EMPTY ? 0 : tokenize(s, alphabet).tokens.length);
+
+    const out = new Set<string>();
+    let truncated = false;
+
+    for (const word of [...l1, ...l2]) {
+        if (lenOf(word) > maxLength) continue;
+        if (!out.has(word) && out.size >= MAX_RESULTS) {
+            truncated = true; 
+            break;
+        }
+        out.add(word);
+    }
+
+    return { strings: Array.from(out), truncated, ms: performance.now() - start };
 }
