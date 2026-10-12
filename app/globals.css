@@ -2,7 +2,7 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
 :root {
   --background: oklch(0.9438 0.0068 277.1603);
