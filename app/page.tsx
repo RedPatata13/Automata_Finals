@@ -1,69 +1,102 @@
-import Image from "next/image";
+"use client";
+
+import { useMemo, useState } from "react";
+import LanguageInput from "@/components/LanguageInput";
+import ResultSection from "@/components/ResultSection";
+import {
+	ConcatResult,
+	concatenate,
+	findIllegalSymbols,
+	parseAlphabet,
+	parseList,
+	removeIllegalSymbols,
+} from "@/lib/formal";
 
 export default function Home() {
-  return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+	const [alphabetRaw, setAlphabetRaw] = useState("a, b");
+	const [l1Raw, setL1Raw] = useState("a, ab");
+	const [l2Raw, setL2Raw] = useState("b, ba");
+	const [maxLen, setMaxLen] = useState(4);
+	const [result, setResult] = useState<ConcatResult | null>(null);
+
+	const alphabet = useMemo(() => parseAlphabet(alphabetRaw), [alphabetRaw]);
+	const illegal1 = useMemo(() => findIllegalSymbols(l1Raw, alphabet), [l1Raw, alphabet]);
+	const illegal2 = useMemo(() => findIllegalSymbols(l2Raw, alphabet), [l2Raw, alphabet]);
+
+	const hasIllegal = illegal1.length > 0 || illegal2.length > 0;
+	const canGenerate =
+    alphabet.length > 0 && !hasIllegal && Number.isInteger(maxLen) && maxLen >= 0;
+
+	function generate() {
+		setResult(concatenate(parseList(l1Raw), parseList(l2Raw), alphabet, maxLen));
+	}
+
+	return (
+		<main className="mx-auto flex max-w-3xl flex-col gap-6 p-6 bg-white text-black w-full">
+		<h1 className="text-2xl font-bold">FormalLab</h1>
+
+		<section className="flex flex-col gap-2">
+			<label className="font-bold">Alphabet (Σ)</label>
+			<input
+			className="border border-black p-2"
+			placeholder="e.g. a, b, c"
+			value={alphabetRaw}
+			onChange={(e) => setAlphabetRaw(e.target.value)}
+			/>
+			<p>Separate each symbol with a comma. Σ = &#123; {alphabet.join(", ")} &#125;</p>
+		</section>
+
+		<section className="flex flex-col gap-4 md:flex-row">
+			<div className="flex-1">
+			<LanguageInput
+				label="Language 1 (L1)"
+				value={l1Raw}
+				onChange={setL1Raw}
+				illegal={illegal1}
+				onRemoveIllegal={() => setL1Raw(removeIllegalSymbols(l1Raw, alphabet))}
+			/>
+			</div>
+			<div className="flex-1">
+			<LanguageInput
+				label="Language 2 (L2)"
+				value={l2Raw}
+				onChange={setL2Raw}
+				illegal={illegal2}
+				onRemoveIllegal={() => setL2Raw(removeIllegalSymbols(l2Raw, alphabet))}
+			/>
+			</div>
+		</section>
+
+		<section className="flex flex-row items-end gap-4">
+			<div className="flex flex-col gap-2">
+			<label className="font-bold">Max string length</label>
+			<input
+				type="number"
+				min={0}
+				className="w-32 border border-black p-2"
+				value={Number.isNaN(maxLen) ? "" : maxLen}
+				onChange={(e) => setMaxLen(parseInt(e.target.value, 10))}
+			/>
+			</div>
+			<button
+				className="bg-red-600 text-white px-4 py-2 disabled:opacity-40"
+				disabled={!canGenerate}
+				onClick={generate}
+			>
+			Generate L1 · L2
+			</button>
+			</section>
+
+			{hasIllegal && (
+				<p className="text-red-600">
+				Fix the illegal symbols above before generating.
+				</p>
+			)}
+
+			<section className="flex flex-col gap-3 border-t border-black pt-4">
+				<h2 className="text-xl font-bold">Results</h2>
+				<ResultSection result={result} />
+			</section>
+		</main>
+	);
 }
