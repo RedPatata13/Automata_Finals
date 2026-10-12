@@ -29,14 +29,14 @@ export function Menu({ isOpen }: MenuProps) {
         {menuList.map(({ groupLabel, menus }, index) => (
           <li className={cn("w-full", groupLabel ? "pt-5" : "")} key={index}>
             {(isOpen && groupLabel) || isOpen === undefined ? (
-              <p className="max-w-62 truncate px-4 pb-2 text-sm font-medium text-gray-500">
+              <p className="max-w-62 truncate px-4 pb-2 text-sm font-medium text-sidebar-foreground/70">
                 {groupLabel}
               </p>
             ) : !isOpen && isOpen !== undefined && groupLabel ? (
               <Tooltip key={`group-${index}-${isOpen}`}>
                 <TooltipTrigger className="w-full">
                   <div className="flex w-full items-center justify-center">
-                    <Ellipsis className="h-5 w-5 text-sidebar-foreground" />
+                    <Ellipsis className="h-5 w-5 text-sidebar-foreground/70" />
                   </div>
                 </TooltipTrigger>
                 <TooltipContent side="right">
