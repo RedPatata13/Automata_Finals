@@ -7,10 +7,10 @@ import {
   SheetContent,
   SheetTrigger,
   SheetTitle,
-  SheetDescription,
 } from "@/components/ui/sheet";
 import Link from "next/link";
 import Image from "next/image";
+import Logo from "@/assets/logo.svg";
 
 export function SheetMenu() {
   return (
@@ -31,15 +31,10 @@ export function SheetMenu() {
             variant="link"
             render={
               <Link href="/" className="flex items-center gap-2">
-                <Image src="/logo.svg" alt="Logo" className="mr-1 size-6" />
-                <div className="flex flex-col items-start">
-                  <SheetTitle className="font-heading text-lg font-bold text-foreground">
-                    BLOCA
-                  </SheetTitle>
-                  <SheetDescription className="text-xs text-primary">
-                    Admin Dashboard
-                  </SheetDescription>
-                </div>
+                <Image src={Logo} alt="Logo" className="mr-1 size-6" />
+                <SheetTitle className="font-heading text-lg font-bold text-foreground">
+                  FormalLab
+                </SheetTitle>
               </Link>
             }
           />

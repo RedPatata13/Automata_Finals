@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import { InputCard } from "./InputCard";
 import { OperationKey, operations } from "@/lib/operations";
