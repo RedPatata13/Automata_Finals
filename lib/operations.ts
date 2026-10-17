@@ -10,8 +10,8 @@ export const operations = {
     unary: false,
   },
   difference: {
-    label: "Difference (A - B)",
-    definition: "A − B = { x | x ∈ A and x ∉ B }",
+    label: "Difference",
+    definition: "A - B = { x | x ∈ A and x ∉ B }",
     unary: false,
   },
   concatenation: {
