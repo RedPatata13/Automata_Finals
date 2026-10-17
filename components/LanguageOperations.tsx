@@ -31,8 +31,20 @@ export function LanguageOperations() {
   const handleCalculate = () => {
     if (hasErrors) return;
     setResult(
-      runOperation(operation, parseList(lang1), parseList(lang2), alpha),
+      runOperation(
+        operation,
+        parseList(lang1),
+        parseList(lang2),
+        alpha,
+        lang1,
+        lang2,
+      ),
     );
+  };
+
+  const handleOperationChange = (op: OperationKey) => {
+    setOperation(op);
+    setResult(null);
   };
 
   return (
@@ -43,7 +55,7 @@ export function LanguageOperations() {
         lang2={lang2}
         setLang2={setLang2}
         operation={operation}
-        setOperation={setOperation}
+        setOperation={handleOperationChange}
         alphabet={alphabet}
         setAlphabet={setAlphabet}
         maxReps={maxReps}
@@ -55,7 +67,12 @@ export function LanguageOperations() {
         onCalculate={handleCalculate}
         canCalculate={!hasErrors}
       />
-      <ResultCard result={result?.strings ?? []} operation={operation} />
+      <ResultCard
+        result={result?.strings ?? []}
+        operation={operation}
+        steps={result?.steps}
+        hasCalculated={result !== null}
+      />
     </div>
   );
 }

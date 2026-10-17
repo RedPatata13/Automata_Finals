@@ -1,4 +1,5 @@
 import { OperationKey } from "@/lib/operations";
+import { StepExplanation } from "@/lib/formal";
 import {
   Card,
   CardContent,
@@ -8,13 +9,21 @@ import {
 } from "./ui/card";
 import { ResultBox } from "./ResultBox";
 import { DefinitionBox } from "./DefinitionBox";
+import { ExplanationBox } from "./ExplanationBox";
 
 interface Props {
   result: string[];
   operation: OperationKey;
+  steps?: StepExplanation[];
+  hasCalculated?: boolean;
 }
 
-export function ResultCard({ result, operation }: Props) {
+export function ResultCard({
+  result,
+  operation,
+  steps,
+  hasCalculated = false,
+}: Props) {
   return (
     <Card>
       <CardHeader>
@@ -22,11 +31,12 @@ export function ResultCard({ result, operation }: Props) {
         <CardDescription>
           {result.length} unique strings generated
         </CardDescription>
-        <CardContent className="flex flex-col gap-4">
-          <ResultBox result={result} />
-          <DefinitionBox operation={operation} />
-        </CardContent>
       </CardHeader>
+      <CardContent className="flex flex-col gap-4">
+        <ResultBox result={result} />
+        <DefinitionBox operation={operation} />
+        <ExplanationBox steps={steps} hasCalculated={hasCalculated} />
+      </CardContent>
     </Card>
   );
 }
