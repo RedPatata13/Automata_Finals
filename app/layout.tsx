@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import { cn } from "@/lib/utils";
 import Providers from "./providers";
+import { Navbar } from "@/components/Navbar";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -31,7 +32,10 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="bg-background text-foreground">
-        <Providers>{children}</Providers>
+        <Providers>
+          <Navbar />
+          <main className="mx-auto w-full max-w-7xl px-4 py-6">{children}</main>
+        </Providers>
       </body>
     </html>
   );
